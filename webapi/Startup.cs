@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using signalrwebapi.Hubs;
 
 namespace signalrwebapi
 {
@@ -21,6 +22,7 @@ namespace signalrwebapi
         {
 
             services.AddControllers();
+            services.AddSignalR();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "signalrwebapi", Version = "v1" });
@@ -46,6 +48,7 @@ namespace signalrwebapi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<TestHub>("/testhub");
             });
 
              app.UseSpa(spa => {
