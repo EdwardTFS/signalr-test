@@ -13,7 +13,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.connection = new HubConnectionBuilder()
-    .withUrl("/testhub")
+    .withUrl("/signalr/test")
     .build();
 
     this.connection.on("receiveMessage", (data,data2) => {

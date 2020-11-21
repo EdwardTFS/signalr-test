@@ -48,7 +48,8 @@ namespace signalrwebapi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<TestHub>("/testhub");
+                endpoints.MapHub<TestHub>("/signalr/test");
+                endpoints.MapHub<DrawHub>("/signalr/draw");
             });
 
              app.UseSpa(spa => {

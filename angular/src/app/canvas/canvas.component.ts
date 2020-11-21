@@ -1,6 +1,7 @@
 import {
     Component, Input, ElementRef, AfterViewInit, ViewChild
   } from '@angular/core';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
   import { fromEvent } from 'rxjs';
   import { switchMap, takeUntil, pairwise, filter, map } from 'rxjs/operators'
   
@@ -15,9 +16,20 @@ import {
   
     @Input() public width = 800;
     @Input() public height = 600;
+    connection? : HubConnection;
+    
   
     private cx?: CanvasRenderingContext2D;
   
+    ngOnInit(): void {
+        this.connection = new HubConnectionBuilder()
+        .withUrl("/signalr/draw")
+        .build();
+    
+        this.connection.on("draw", (x,y) => this.drawOnCanvas(x,y));
+        this.connection.start()
+      }
+
     public ngAfterViewInit() {
       const canvasEl: HTMLCanvasElement = this.canvas!.nativeElement;
       this.cx = canvasEl.getContext('2d')!;
@@ -67,6 +79,9 @@ import {
             y: res[1].clientY - rect.top
           };
     
+          if(this.connection){
+            this.connection?.send("draw",prevPos,currentPos);
+          }
           // this method we'll implement soon to do the actual drawing
           this.drawOnCanvas(prevPos, currentPos);
         });
@@ -83,6 +98,22 @@ import {
         this.cx.stroke();
       }
     }
+
+    
+  
+
+  ngOnDestroy(): void {
+    this.connection && this.connection.stop();
+  }
+  
+  
+  click($event : any)
+  {
+    console.log($event);
+    if(this.connection){
+      this.connection?.send("sendMessage",new Date(),navigator.userAgent)
+    }
+  }
   
   }
   
